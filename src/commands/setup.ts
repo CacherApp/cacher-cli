@@ -1,19 +1,20 @@
-import {Command, flags} from '@oclif/command'
+import {flags} from '@oclif/command'
+import chalk from 'chalk'
+import * as fs from 'fs'
+import * as os from 'os'
 
 const request = require('request')
 const ora = require('ora')
-const chalk = require('chalk')
-const os = require('os')
-const fs = require('fs')
 
 const prompt = require('prompt')
 prompt.message = ''
 prompt.delimiter = ':'
 
 require('dotenv').config()
+import {BaseCommand} from '../base-command'
 import config from '../config'
 
-export default class Setup extends Command {
+export default class Setup extends BaseCommand {
   static description = `
 Configure API credentials for Cacher CLI. To view your API token and key visit:
 ${config.apiHost}/enter?action=view_api_creds
@@ -32,6 +33,9 @@ API token: ********************************
     key: flags.string({char: 'k', description: 'api key for Cacher account'}),
     token: flags.string({char: 't', description: 'token for Cacher account'})
   }
+
+  private apiKey = ''
+  private apiToken = ''
 
   async run() {
     const {flags} = this.parse(Setup)
@@ -66,42 +70,47 @@ ${config.apiHost}/enter?action=view_api_creds
 
     prompt.start()
 
-    let apiKey = ''
-    let apiToken = ''
-
     prompt.get(prompts, (err: any, result: any) => {
-      apiKey = result.key
-      apiToken = result.token
+      this.apiKey = result.key
+      this.apiToken = result.token
 
-      const spinner = ora('Logging into Cacher').start()
-      spinner.color = 'green'
-
-      request({
-        method: 'POST',
-        url: `${config.apiHost}/integrations/validate`,
-        headers: {
-          'X-Api-Key': apiKey,
-          'X-Api-Token': apiToken
-        },
-        strictSSL: false
-      }, (error: any, response: any, body: any) => {
-        if (response.statusCode === 204) {
-          const credentialsDir = `${os.homedir()}/.cacher`
-          if (!fs.existsSync(credentialsDir)) {
-            fs.mkdirSync(credentialsDir)
-          }
-
-          const credentialsJSON = {
-            key: apiKey,
-            token: apiToken
-          }
-          fs.writeFileSync(`${credentialsDir}/credentials.json`, JSON.stringify(credentialsJSON))
-
-          spinner.succeed(chalk.green(` API key/token validated. Credentials saved in "${credentialsDir}"`))
-        } else {
-          spinner.fail(chalk.red(' Cacher API key/token combination invalid. Credentials not saved.'))
-        }
-      })
+      this.validateCredentials()
     })
+  }
+
+  validateCredentials = () => {
+    const spinner = ora('Logging into Cacher').start()
+    spinner.color = 'green'
+
+    request({
+      method: 'POST',
+      url: `${config.apiHost}/integrations/validate`,
+      headers: {
+        'X-Api-Key': this.apiKey,
+        'X-Api-Token': this.apiToken
+      },
+      strictSSL: false
+    }, (error: any, response: any, body: any) => {
+      this.handleApiResponse(response, spinner)
+
+      if (response.statusCode === 204) {
+        this.onValidateSuccess(spinner)
+      }
+    })
+  }
+
+  onValidateSuccess = (spinner: any) => {
+    const credentialsDir = `${os.homedir()}/.cacher`
+    if (!fs.existsSync(credentialsDir)) {
+      fs.mkdirSync(credentialsDir)
+    }
+
+    const credentialsJSON = {
+      key: this.apiKey,
+      token: this.apiToken
+    }
+    const credentialsFile = `${credentialsDir}/credentials.json`
+    fs.writeFileSync(credentialsFile, JSON.stringify(credentialsJSON))
+    spinner.succeed(chalk.green(` API key/token validated. Credentials saved to "${credentialsFile}"`))
   }
 }
