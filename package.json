@@ -1,0 +1,66 @@
+{
+  "name": "@cacherapp/cli",
+  "description": "The command line interface to Cacher.",
+  "version": "0.1.0",
+  "author": "Penguin Labs, LLC",
+  "bin": {
+    "cacher": "./bin/run"
+  },
+  "bugs": "https://github.com/cacherapp/cacher-cli/issues",
+  "dependencies": {
+    "@oclif/command": "^1.4.2",
+    "@oclif/config": "^1.3.59",
+    "@oclif/dev-cli": "^1.3.1",
+    "@oclif/errors": "^1.0.2",
+    "@oclif/plugin-help": "^1.1.6",
+    "@oclif/tslint": "^1.0.2",
+    "@types/node": "^9.4.6",
+    "chalk": "^2.3.2",
+    "dotenv": "^5.0.1",
+    "eslint": "^4.19.1",
+    "globby": "^8.0.1",
+    "ora": "^2.0.0",
+    "prompt": "^1.0.0",
+    "request": "^2.85.0",
+    "ts-node": "^5.0.0",
+    "tslib": "^1.9.0",
+    "tslint": "^5.9.1",
+    "typescript": "^2.7.2"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    ".oclif.manifest.json",
+    "/bin",
+    "/lib"
+  ],
+  "homepage": "https://github.com/cacherapp/cacher-cli",
+  "keywords": [
+    "cacher",
+    "oclif"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "oclif": {
+    "commands": "./lib/commands",
+    "bin": "cacher",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "repository": "cacherapp/cacher-cli",
+  "scripts": {
+    "build": "rm -rf lib && tsc",
+    "clean": "rm -f .oclif.manifest.json",
+    "lint": "tsc -p test --noEmit && tslint -p test -t stylish",
+    "postpublish": "npm run clean",
+    "posttest": "npm run lint",
+    "prepublishOnly": "npm run build && oclif-dev manifest",
+    "preversion": "npm run clean",
+    "test": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "oclif-dev readme && git add README.md"
+  },
+  "types": "lib/index.d.ts"
+}
