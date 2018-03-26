@@ -190,7 +190,7 @@ export default class Add extends BaseCommand {
         if (!this.quiet) {
           this.log(
             `\n${chalk.white('View your snippet in Cacher:')}
-${chalk.yellow.underline(`${config.appHost}/enter?action=view_snippet=${body.snippet.guid}`)}`
+${chalk.yellow.underline(`${config.appHost}/enter?action=goto_snippet&s=${body.snippet.guid}`)}`
           )
 
           this.log(
@@ -227,7 +227,7 @@ ${chalk.yellow.underline(`${config.snippetsHost}/snippet/${body.snippet.guid}`)}
       (err: any, action: any) => {
         if (action === 'activate') {
           opn(
-            `${config.appHost}/enter?action=view_snippet=${this.snippet.guid}`,
+            `${config.appHost}/enter?action=goto_snippet&s=${this.snippet.guid}`,
             {wait: false}
           )
         }
