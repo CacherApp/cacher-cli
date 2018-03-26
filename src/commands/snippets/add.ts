@@ -12,6 +12,7 @@ const ora = require('ora')
 
 import {BaseCommand} from '../../base-command'
 import config from '../../config'
+import ErrorCodes from '../../errors-codes'
 import {getModeForPath} from '../../filetypes'
 
 export default class Add extends BaseCommand {
@@ -27,7 +28,7 @@ export default class Add extends BaseCommand {
 ? Snippet title: Example for CLI
 ? Description: This is an example for the Cacher CLI.
 `,
-    `$ cacher snippets:add --filename=my_file_from_clipboard.md --title="Public example from System Clipboard" --description="Snippet created from contents in the clipboard" --team=cacher-dev-ops --public
+    `$ cacher snippets:add --filename=my_file_from_clipboard.md --title="Public example from System Clipboard" --description="Snippet created from contents in the clipboard" --team=cacher-dev-ops --public --quiet
 `,
   ]
 
@@ -183,8 +184,6 @@ export default class Add extends BaseCommand {
       json: true,
       body
     }, (error: any, response: any, body: any) => {
-      this.handleApiResponse(response, spinner)
-
       if (response.statusCode === 200) {
         spinner.succeed(chalk.green(` Snippet successfully created: ${this.title}`))
 
@@ -202,6 +201,15 @@ ${chalk.yellow.underline(`${config.snippetsHost}/snippet/${body.snippet.guid}`)}
           this.snippet = body.snippet
           this.notifyCreated()
         }
+      } else if (response.statusCode === 403
+        && body.error_code === ErrorCodes.planLimitSnippets) {
+        spinner.fail(chalk.red(' You have hit your account plan limit for private snippets.'))
+        this.log(chalk.red('Upgrade your plan at: ') + chalk.red.underline(`${config.appHost}/enter?action=view_plans`))
+      } else if (response.statusCode === 404
+        && body.error_code === ErrorCodes.resourceNotFoundTeam) {
+        spinner.fail(chalk.red(` Team with screenname "${this.teamScreenname}" not found.`))
+      } else {
+        this.handleApiResponse(response, spinner)
       }
     })
   }
