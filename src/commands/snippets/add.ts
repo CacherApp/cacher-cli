@@ -175,7 +175,7 @@ export default class Add extends BaseCommand {
 
     request({
       method: 'POST',
-      url: `${config.apiHost}/integrations/create_snippet`,
+      url: `${config.apiHost}/public/snippets`,
       headers: {
         'X-Api-Key': credentials.apiKey,
         'X-Api-Token': credentials.apiToken
@@ -190,7 +190,7 @@ export default class Add extends BaseCommand {
         if (!this.quiet) {
           this.log(
             `\n${chalk.white('View your snippet in Cacher:')}
-${chalk.yellow.underline(`${config.apiHost}/enter?action=view_snippet=${body.snippet.guid}`)}`
+${chalk.yellow.underline(`${config.appHost}/enter?action=view_snippet=${body.snippet.guid}`)}`
           )
 
           this.log(
@@ -222,8 +222,7 @@ ${chalk.yellow.underline(`${config.snippetsHost}/snippet/${body.snippet.guid}`)}
         icon: path.join(__dirname, '..', '..', 'images', 'cacher-icon.png'),
         timeout: 3,
         actions: 'Open',
-        closeLabel: 'Close',
-        open: `${config.appHost}/enter?action=view_snippet=${this.snippet.guid}`
+        closeLabel: 'Close'
       },
       (err: any, action: any) => {
         if (action === 'activate') {

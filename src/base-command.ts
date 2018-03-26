@@ -45,7 +45,7 @@ export abstract class BaseCommand extends Command {
     if (response.statusCode === 403) {
       spinner.fail(chalk.red(' Cacher API key/token combination invalid.'))
     } else if (response.statusCode >= 400) {
-      spinner.fail(chalk.red(' There was an error validating the API key and token.'))
+      spinner.fail(chalk.red(' Server-side error.'))
     }
   }
 }

@@ -15,7 +15,7 @@ import config from '../../config'
 export default class Setup extends BaseCommand {
   static description = `
 Configure API credentials for Cacher CLI. To view your API token and key visit:
-${chalk.underline(`${config.apiHost}/enter?action=view_api_creds`)}
+${chalk.underline(`${config.appHost}/enter?action=view_api_creds`)}
 `
 
   static examples = [
@@ -42,7 +42,7 @@ ${chalk.underline(`${config.apiHost}/enter?action=view_api_creds`)}
       this.log(
         chalk.yellow(`
 To view your Cacher API token and token, visit:
-${chalk.underline(`${config.apiHost}/enter?action=view_api_creds`)}
+${chalk.underline(`${config.appHost}/enter?action=view_api_creds`)}
 `)
       )
     }
@@ -105,7 +105,7 @@ ${chalk.underline(`${config.apiHost}/enter?action=view_api_creds`)}
 
     request({
       method: 'POST',
-      url: `${config.apiHost}/integrations/validate`,
+      url: `${config.apiHost}/public/validate`,
       headers: {
         'X-Api-Key': this.apiKey,
         'X-Api-Token': this.apiToken
