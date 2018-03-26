@@ -11,13 +11,13 @@ prompt.message = ''
 prompt.delimiter = ':'
 
 require('dotenv').config()
-import {BaseCommand} from '../base-command'
-import config from '../config'
+import {BaseCommand} from '../../base-command'
+import config from '../../config'
 
 export default class Setup extends BaseCommand {
   static description = `
 Configure API credentials for Cacher CLI. To view your API token and key visit:
-${config.apiHost}/enter?action=view_api_creds
+${chalk.underline(`${config.apiHost}/enter?action=view_api_creds`)}
 `
 
   static examples = [
@@ -46,14 +46,14 @@ API token: ********************************
         description: 'API key',
         required: true,
         hidden: true,
-        replace: '*',
+        replace: '*'
       },
       {
         name: 'token',
         description: 'API token',
         required: true,
         hidden: true,
-        replace: '*',
+        replace: '*'
       }
     ]
 
@@ -63,7 +63,7 @@ API token: ********************************
       this.log(
         chalk.yellow(`
 To view your Cacher API token and token, visit:
-${config.apiHost}/enter?action=view_api_creds
+${chalk.underline(`${config.apiHost}/enter?action=view_api_creds`)}
 `)
       )
     }

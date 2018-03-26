@@ -49,7 +49,11 @@
     "bin": "cacher",
     "plugins": [
       "@oclif/plugin-help"
-    ]
+    ],
+    "topics": {
+      "setup": { "description": "configure cacher credentials" },
+      "snippets": { "description": "commands for library snippets" }
+    }
   },
   "repository": "cacherapp/cacher-cli",
   "scripts": {
