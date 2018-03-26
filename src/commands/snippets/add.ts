@@ -3,13 +3,11 @@ import chalk from 'chalk'
 import * as fs from 'fs'
 import * as path from 'path'
 
+const inquirer = require('inquirer')
 const ncp = require('copy-paste')
+const notifier = require('node-notifier')
 const request = require('request')
 const ora = require('ora')
-
-const prompt = require('prompt')
-prompt.message = ''
-prompt.delimiter = ':'
 
 import {BaseCommand} from '../../base-command'
 import config from '../../config'
@@ -20,15 +18,15 @@ export default class Add extends BaseCommand {
 
   static examples = [
     `$ cacher snippets:add
-Snippet title: Example from System Clipboard
-Description (empty): Snippet created from contents in the clipboard.
-Filename: my_file_from_clipboard.md
-`,
-    `$ cacher snippets:add --filename=my_file_from_clipboard.md --title="Public example from System Clipboard" --description="Snippet created from contents in the clipboard" --team=cacher-dev-ops --public
+? Snippet title: Example from System Clipboard
+? Description: Snippet created from contents in the clipboard.
+? Filename: my_file_from_clipboard.md
 `,
     `$ cacher snippets:add ~/MyCode/example.rb
-Snippet title: Example for CLI
-Description (empty): This is an example for the Cacher CLI.
+? Snippet title: Example for CLI
+? Description: This is an example for the Cacher CLI.
+`,
+    `$ cacher snippets:add --filename=my_file_from_clipboard.md --title="Public example from System Clipboard" --description="Snippet created from contents in the clipboard" --team=cacher-dev-ops --public
 `,
   ]
 
@@ -51,6 +49,8 @@ Description (empty): This is an example for the Cacher CLI.
   private filetype = ''
   private teamScreenname: any
   private isPublic = false
+
+  private snippet: any
 
   async run() {
     const {args, flags} = this.parse(Add)
@@ -78,34 +78,70 @@ Description (empty): This is an example for the Cacher CLI.
 
     this.log(chalk.yellow(`${this.content}\n`))
 
-    const prompts = [
-      {
+    this.filename = this.filename || ''
+    this.title = flags.title || ''
+    this.description = flags.description || ''
+    this.teamScreenname = flags.team
+    this.isPublic = flags.public === true
+
+    const inquiries = []
+
+    if (!this.title) {
+      inquiries.push({
+        type: 'input',
         name: 'title',
-        description: 'Snippet title',
-        required: true
-      },
-      {
+        message: 'Snippet title',
+        suffix: ':',
+        validate: (input: string) => {
+          if (input.trim() === '') {
+            return 'Snippet title required'
+          } else {
+            return true
+          }
+        }
+      })
+    }
+
+    if (!this.description) {
+      inquiries.push({
+        type: 'input',
         name: 'description',
-        description: 'Description (empty)',
-        required: false
-      },
-      {
+        message: 'Description',
+        suffix: ':',
+        default: ''
+      })
+    }
+
+    if (!this.filename) {
+      inquiries.push({
+        type: 'input',
         name: 'filename',
-        description: 'Filename',
-        required: true
-      },
-    ]
+        message: 'Filename',
+        suffix: ':',
+        validate: (input: string) => {
+          if (input.trim() === '') {
+            return 'Filename required'
+          } else {
+            return true
+          }
+        }
+      })
+    }
 
-    prompt.override = {...args, ...flags}
+    inquirer.prompt(inquiries).then((answers: any) => {
+      if (answers.title) {
+        this.title = answers.title
+      }
 
-    prompt.get(prompts, (err: any, result: any) => {
-      this.title = result.title
-      this.description = result.description
-      this.teamScreenname = flags.team
-      this.isPublic = flags.public === true
-      this.filename = this.filename || result.filename
+      if (answers.description) {
+        this.description = answers.description
+      }
+
+      if (answers.filename) {
+        this.filename = answers.filename
+      }
+
       this.filetype = getModeForPath(this.filename).mode.split('/')[2]
-
       this.saveSnippet()
     })
   }
@@ -148,15 +184,31 @@ Description (empty): This is an example for the Cacher CLI.
       if (response.statusCode === 200) {
         spinner.succeed(chalk.green(` Snippet successfully created: ${this.title}`))
         this.log(
-          chalk.yellow(`\nView your snippet in the Cacher app:
-${chalk.underline(`${config.apiHost}/enter?action=view_snippet=${body.snippet.guid}`)}\n`)
+          `\n${chalk.white('View your snippet in Cacher:')}
+${chalk.yellow.underline(`${config.apiHost}/enter?action=view_snippet=${body.snippet.guid}`)}`
         )
 
         this.log(
-          chalk.yellow(`View your snippet's page:
-${chalk.underline(`${config.snippetsHost}/snippet/${body.snippet.guid}`)}\n`)
+          `\n${chalk.white('View your snippet\'s page:')}
+${chalk.yellow.underline(`${config.snippetsHost}/snippet/${body.snippet.guid}`)}\n`
         )
+
+        this.snippet = body.snippet
+        this.notifyCreated()
       }
     })
+  }
+
+  notifyCreated = () => {
+    notifier.notify(
+      {
+        title: 'Snippet created',
+        message: this.title,
+        icon: path.join(__dirname, '..', '..', 'images', 'cacher-icon.png'),
+        open: `${config.appHost}/enter?action=view_snippet=${this.snippet.guid}`,
+        wait: true,
+        timeout: 3
+      }
+    )
   }
 }

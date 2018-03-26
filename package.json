@@ -20,8 +20,9 @@
     "dotenv": "^5.0.1",
     "eslint": "^4.19.1",
     "globby": "^8.0.1",
+    "inquirer": "^5.1.0",
+    "node-notifier": "^5.2.1",
     "ora": "^2.0.0",
-    "prompt": "^1.0.0",
     "request": "^2.85.0",
     "ts-node": "^5.0.0",
     "tslib": "^1.9.0",
@@ -51,8 +52,12 @@
       "@oclif/plugin-help"
     ],
     "topics": {
-      "setup": { "description": "configure cacher credentials" },
-      "snippets": { "description": "commands for library snippets" }
+      "setup": {
+        "description": "configure cacher credentials"
+      },
+      "snippets": {
+        "description": "commands for library snippets"
+      }
     }
   },
   "repository": "cacherapp/cacher-cli",

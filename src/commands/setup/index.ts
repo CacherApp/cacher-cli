@@ -6,9 +6,7 @@ import * as os from 'os'
 const request = require('request')
 const ora = require('ora')
 
-const prompt = require('prompt')
-prompt.message = ''
-prompt.delimiter = ':'
+const inquirer = require('inquirer')
 
 require('dotenv').config()
 import {BaseCommand} from '../../base-command'
@@ -22,8 +20,8 @@ ${chalk.underline(`${config.apiHost}/enter?action=view_api_creds`)}
 
   static examples = [
     `cacher setup
-API key: ****************,
-API token: ********************************
+? API key: ****************,
+? API token: ********************************
 `,
     `cacher setup --key=fe33cd82ae161ba1 --token=0134a0be884468829669c3be02c3a814
 `
@@ -40,25 +38,6 @@ API token: ********************************
   async run() {
     const {flags} = this.parse(Setup)
 
-    const prompts = [
-      {
-        name: 'key',
-        description: 'API key',
-        required: true,
-        hidden: true,
-        replace: '*'
-      },
-      {
-        name: 'token',
-        description: 'API token',
-        required: true,
-        hidden: true,
-        replace: '*'
-      }
-    ]
-
-    prompt.override = flags
-
     if (!flags.key || !flags.token) {
       this.log(
         chalk.yellow(`
@@ -68,11 +47,53 @@ ${chalk.underline(`${config.apiHost}/enter?action=view_api_creds`)}
       )
     }
 
-    prompt.start()
+    this.apiKey = flags.key || ''
+    this.apiToken = flags.token || ''
 
-    prompt.get(prompts, (err: any, result: any) => {
-      this.apiKey = result.key
-      this.apiToken = result.token
+    const inquiries = []
+
+    if (!this.apiKey) {
+      inquiries.push({
+        type: 'password',
+        name: 'key',
+        message: 'API key',
+        mask: '*',
+        suffix: ':',
+        validate: (input: string) => {
+          if (input.trim() === '') {
+            return 'API key input required'
+          } else {
+            return true
+          }
+        }
+      })
+    }
+
+    if (!this.apiToken) {
+      inquiries.push({
+        type: 'password',
+        name: 'token',
+        message: 'API token',
+        mask: '*',
+        suffix: ':',
+        validate: (input: string) => {
+          if (input.trim() === '') {
+            return 'API token input required'
+          } else {
+            return true
+          }
+        }
+      })
+    }
+
+    inquirer.prompt(inquiries).then((answers: any) => {
+      if (answers.key) {
+        this.apiKey = answers.key
+      }
+
+      if (answers.token) {
+        this.apiToken = answers.token
+      }
 
       this.validateCredentials()
     })
