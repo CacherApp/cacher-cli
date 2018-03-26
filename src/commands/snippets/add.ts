@@ -7,6 +7,7 @@ const inquirer = require('inquirer')
 const ncp = require('copy-paste')
 const notifier = require('node-notifier')
 const request = require('request')
+const opn = require('opn')
 const ora = require('ora')
 
 import {BaseCommand} from '../../base-command'
@@ -35,7 +36,8 @@ export default class Add extends BaseCommand {
     title: flags.string({char: 't', description: 'snippet title'}),
     description: flags.string({char: 'd', description: 'snippet description', default: ''}),
     team: flags.string({char: 'm', description: 'screenname of team library that snippet will be created in', default: ''}),
-    public: flags.boolean({char: 'u', description: 'save as public snippet'})
+    public: flags.boolean({char: 'u', description: 'save as public snippet'}),
+    quiet: flags.boolean({char: 'q', description: 'minimal feedback'})
   }
 
   static args = [
@@ -49,6 +51,7 @@ export default class Add extends BaseCommand {
   private filetype = ''
   private teamScreenname: any
   private isPublic = false
+  private quiet = false
 
   private snippet: any
 
@@ -83,6 +86,7 @@ export default class Add extends BaseCommand {
     this.description = flags.description || ''
     this.teamScreenname = flags.team
     this.isPublic = flags.public === true
+    this.quiet = flags.quiet === true
 
     const inquiries = []
 
@@ -183,18 +187,21 @@ export default class Add extends BaseCommand {
 
       if (response.statusCode === 200) {
         spinner.succeed(chalk.green(` Snippet successfully created: ${this.title}`))
-        this.log(
-          `\n${chalk.white('View your snippet in Cacher:')}
+
+        if (!this.quiet) {
+          this.log(
+            `\n${chalk.white('View your snippet in Cacher:')}
 ${chalk.yellow.underline(`${config.apiHost}/enter?action=view_snippet=${body.snippet.guid}`)}`
-        )
+          )
 
-        this.log(
-          `\n${chalk.white('View your snippet\'s page:')}
+          this.log(
+            `\n${chalk.white('View your snippet\'s page:')}
 ${chalk.yellow.underline(`${config.snippetsHost}/snippet/${body.snippet.guid}`)}\n`
-        )
+          )
 
-        this.snippet = body.snippet
-        this.notifyCreated()
+          this.snippet = body.snippet
+          this.notifyCreated()
+        }
       }
     })
   }
@@ -205,9 +212,18 @@ ${chalk.yellow.underline(`${config.snippetsHost}/snippet/${body.snippet.guid}`)}
         title: 'Snippet created',
         message: this.title,
         icon: path.join(__dirname, '..', '..', 'images', 'cacher-icon.png'),
-        open: `${config.appHost}/enter?action=view_snippet=${this.snippet.guid}`,
-        wait: true,
-        timeout: 3
+        timeout: 3,
+        actions: 'Open',
+        closeLabel: 'Close',
+        open: `${config.appHost}/enter?action=view_snippet=${this.snippet.guid}`
+      },
+      (err: any, action: any) => {
+        if (action === 'activate') {
+          opn(
+            `${config.appHost}/enter?action=view_snippet=${this.snippet.guid}`,
+            {wait: false}
+          )
+        }
       }
     )
   }
