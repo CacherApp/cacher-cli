@@ -13,27 +13,36 @@ function getModeForPath(path: string) {
   return mode
 }
 
-let Mode = function (name: any, caption: any, extensions: any) {
-  this.name = name
-  this.caption = caption
-  this.mode = 'ace/mode/' + name
-  this.extensions = extensions
-  let re
-  if (/\^/.test(extensions)) {
-    re = extensions.replace(/\|(\^)?/g, function (a: any, b: any) {
-      return '$|' + (b ? '^' : '^.*\\.')
-    }) + '$'
-  } else {
-    re = '^.*\\.(' + extensions + ')$'
+class Mode {
+  name: string
+  caption: string
+  mode: string
+  extensions: any
+  extRe: any
+
+  constructor(name: string, caption: string, extensions: any) {
+    this.name = name
+    this.caption = caption
+    this.mode = 'ace/mode/' + name
+    this.extensions = extensions
+    let re
+    if (/\^/.test(extensions)) {
+      re = extensions.replace(/\|(\^)?/g, function (a: any, b: any) {
+        return '$|' + (b ? '^' : '^.*\\.')
+      }) + '$'
+    } else {
+      re = '^.*\\.(' + extensions + ')$'
+    }
+
+    this.extRe = new RegExp(re, 'gi')
   }
 
-  this.extRe = new RegExp(re, 'gi')
+  public supportsFile(filename: string) {
+    return filename.match(this.extRe)
+  }
 }
 
-Mode.prototype.supportsFile = function (filename: string) {
-  return filename.match(this.extRe)
-}
-let supportedModes = {
+let supportedModes: any = {
   ABAP: ['abap'],
   ABC: ['abc'],
   ActionScript: ['as'],
@@ -180,7 +189,7 @@ let supportedModes = {
   Django: ['html']
 }
 
-let nameOverrides = {
+let nameOverrides: any = {
   ObjectiveC: 'Objective-C',
   CSharp: 'C#',
   golang: 'Go',

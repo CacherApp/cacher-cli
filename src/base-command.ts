@@ -23,8 +23,8 @@ export abstract class BaseCommand extends Command {
   }
 
   getCredentials() {
-    let apiKeyFromFile: string
-    let apiTokenFromFile: string
+    let apiKeyFromFile = ''
+    let apiTokenFromFile = ''
 
     const credentialsFile = `${os.homedir()}/.cacher/credentials.json`
 

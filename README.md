@@ -119,4 +119,3 @@ cacher help snippets:add    # Help and usage for the snippets:add command
 ## Author / License
 
 Released under the [MIT License](/LICENSE) by [Rui Jiang](https://github.com/jookyboi) of [Cacher](https://www.cacher.io).
-
