@@ -6,9 +6,9 @@ developers.
 
 ![Cacher logo](src/images/cacher-logo.png)
 
-[![Version](https://img.shields.io/npm/v/cacher-cli.svg)](https://npmjs.org/package/@cacherapp/cli)
-[![Downloads/week](https://img.shields.io/npm/dw/cacher-cli.svg)](https://npmjs.org/package/@cacherapp/cli)
-[![License](https://img.shields.io/npm/l/cacher-cli.svg)](https://github.com/jookyboi/cli/blob/master/package.json)
+[![Version](https://img.shields.io/npm/v/@cacherapp/cli.svg)](https://npmjs.org/package/@cacherapp/cli)
+[![Downloads/week](https://img.shields.io/npm/dw/@cacherapp/cli.svg)](https://npmjs.org/package/@cacherapp/cli)
+[![License](https://img.shields.io/npm/l/@cacherapp/cli.svg)](https://github.com/jookyboi/cli/blob/master/package.json)
 
 The Cacher CLI allows power users to perform common actions on their Cacher libraries.
 
