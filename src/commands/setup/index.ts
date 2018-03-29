@@ -20,7 +20,7 @@ ${chalk.underline(`${config.appHost}/enter?action=view_api_creds`)}
 
   static examples = [
     `cacher setup
-? API key: ****************,
+? API key: ****************
 ? API token: ********************************
 `,
     `cacher setup --key=fe33cd82ae161ba1 --token=0134a0be884468829669c3be02c3a814

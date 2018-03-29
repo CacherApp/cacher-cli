@@ -16,7 +16,7 @@ import ErrorCodes from '../../errors-codes'
 import {getModeForPath} from '../../filetypes'
 
 export default class Add extends BaseCommand {
-  static description = 'Add a new snippet to your Cacher personal/team library.'
+  static description = 'Add a new snippet to your Cacher personal/team library. By default, creates snippet using clipboard contents. Append filename argument to use file contents instead.'
 
   static examples = [
     `$ cacher snippets:add
@@ -28,7 +28,10 @@ export default class Add extends BaseCommand {
 ? Snippet title: Example for CLI
 ? Description: This is an example for the Cacher CLI.
 `,
-    `$ cacher snippets:add --filename=my_file_from_clipboard.md --title="Public example from System Clipboard" --description="Snippet created from contents in the clipboard" --team=cacher-dev-ops --public --quiet
+    `$ cacher snippets:add --filename=my_file_from_clipboard.md \\
+   --title="Public example from System Clipboard" \\
+   --description="Snippet created from contents in the clipboard" \\
+   --team=cacher-dev-ops --public --quiet
 `,
   ]
 
@@ -47,7 +50,7 @@ export default class Add extends BaseCommand {
 
   private filename = ''
   private title = ''
-  private description = ''
+  private snippetDescription = ''
   private content = ''
   private filetype = ''
   private teamScreenname: any
@@ -84,7 +87,7 @@ export default class Add extends BaseCommand {
 
     this.filename = this.filename || ''
     this.title = flags.title || ''
-    this.description = flags.description || ''
+    this.snippetDescription = flags.description || ''
     this.teamScreenname = flags.team
     this.isPublic = flags.public === true
     this.quiet = flags.quiet === true
@@ -107,7 +110,7 @@ export default class Add extends BaseCommand {
       })
     }
 
-    if (!this.description) {
+    if (!this.snippetDescription) {
       inquiries.push({
         type: 'input',
         name: 'description',
@@ -139,7 +142,7 @@ export default class Add extends BaseCommand {
       }
 
       if (answers.description) {
-        this.description = answers.description
+        this.snippetDescription = answers.description
       }
 
       if (answers.filename) {
@@ -161,7 +164,7 @@ export default class Add extends BaseCommand {
       teamScreenname: this.teamScreenname,
       snippet: {
         title: this.title,
-        description: this.description,
+        description: this.snippetDescription,
         isPrivate: !this.isPublic,
         files: [
           {
