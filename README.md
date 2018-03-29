@@ -42,8 +42,8 @@ If all goes well, your credentials will be saved and you can execute CLI command
 
 ## Commands
 
-* [cacher setup](#setup)
-* [cacher snippets:add [FILENAME]](#snippets:add)
+* [setup](#setup)
+* [snippets:add](#snippetsadd)
 
 ### setup
 
