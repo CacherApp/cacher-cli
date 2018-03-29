@@ -14,6 +14,8 @@ The Cacher CLI allows power users to perform common actions on their Cacher libr
 
 The beta version is constantly evolving. Check back often for updates and new commands.
 
+![CLI demo](src/images/demo.gif)
+
 ## Getting Started
 
 **Prerequisites**
