@@ -36,6 +36,8 @@ ${chalk.underline(`${config.appHost}/enter?action=view_api_creds`)}
   private apiToken = ''
 
   async run() {
+    this.checkForUpdate()
+
     const {flags} = this.parse(Setup)
 
     if (!flags.key || !flags.token) {
@@ -121,16 +123,13 @@ ${chalk.underline(`${config.appHost}/enter?action=view_api_creds`)}
   }
 
   onValidateSuccess = (spinner: any) => {
-    const credentialsDir = `${os.homedir()}/.cacher`
-    if (!fs.existsSync(credentialsDir)) {
-      fs.mkdirSync(credentialsDir)
-    }
+    this.makeCacherDir()
 
     const credentialsJSON = {
       key: this.apiKey,
       token: this.apiToken
     }
-    const credentialsFile = `${credentialsDir}/credentials.json`
+    const credentialsFile = `${this.cacherDir}/credentials.json`
     fs.writeFileSync(credentialsFile, JSON.stringify(credentialsJSON))
     spinner.succeed(chalk.green(` API key/token validated. Credentials saved to "${credentialsFile}"`))
   }

@@ -60,6 +60,8 @@ export default class Add extends BaseCommand {
   private snippet: any
 
   async run() {
+    this.checkForUpdate()
+
     const {args, flags} = this.parse(Add)
     this.checkCredentials()
 
