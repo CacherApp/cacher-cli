@@ -103,7 +103,7 @@ let supportedModes: any = {
   Io: ['io'],
   Jack: ['jack'],
   Jade: ['jade|pug'],
-  Java: ['java'],
+  Java: ['java|cls|tgr'],
   JavaScript: ['js|jsm|jsx'],
   JSON: ['json'],
   JSONiq: ['jq'],

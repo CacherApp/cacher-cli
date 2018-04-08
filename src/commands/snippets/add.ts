@@ -185,7 +185,7 @@ export default class Add extends BaseCommand {
         'X-Api-Key': credentials.apiKey,
         'X-Api-Token': credentials.apiToken
       },
-      strictSSL: false,
+      strictSSL: config.env === 'production',
       json: true,
       body
     }, (error: any, response: any, body: any) => {

@@ -112,7 +112,7 @@ ${chalk.underline(`${config.appHost}/enter?action=view_api_creds`)}
         'X-Api-Key': this.apiKey,
         'X-Api-Token': this.apiToken
       },
-      strictSSL: false
+      strictSSL: config.env === 'production'
     }, (error: any, response: any, body: any) => {
       this.handleApiResponse(response, spinner)
 
