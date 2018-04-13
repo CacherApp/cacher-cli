@@ -36,7 +36,7 @@ Note the API key and token in the Apps dialog footer:
 From a terminal window, run:
 
 ```bash
-npm install -g @cacher/cli
+npm install -g @cacherapp/cli
 cacher setup
 ? API key: ****************
 ? API token: ********************************
