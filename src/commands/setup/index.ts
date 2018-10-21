@@ -1,7 +1,6 @@
 import {flags} from '@oclif/command'
 import chalk from 'chalk'
 import * as fs from 'fs'
-import * as os from 'os'
 
 const request = require('request')
 const ora = require('ora')
