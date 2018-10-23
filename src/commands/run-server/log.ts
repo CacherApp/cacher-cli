@@ -8,7 +8,8 @@ export default class Log extends BaseCommand {
 
   static examples = [
     `$ cacher run-server:log
-$ cacher run-server:log --tail
+$ cacher run-server:log -t
+$ cacher run-server:log -n 100
 `,
   ]
 
@@ -19,6 +20,7 @@ $ cacher run-server:log --tail
 
   async run() {
     const {flags} = this.parse(Log)
-    RunServer.openLog(flags.tail, flags.lines)
+    const lines = flags.lines ? parseInt(flags.lines, 10) : undefined
+    RunServer.openLog(flags.tail, lines)
   }
 }

@@ -1,4 +1,4 @@
-Cacher CLI (Beta)
+Cacher CLI
 ==========
 
 **Cacher CLI** - The command line interface to [Cacher](https://www.cacher.io), the code snippet organizer for pro 
@@ -12,7 +12,7 @@ developers.
 
 The Cacher CLI allows power users to perform common actions on their Cacher libraries.
 
-The beta version is constantly evolving. Check back often for updates and new commands.
+The CLI is constantly evolving. Check back often for updates and new commands.
 
 **Demo**
 
@@ -48,6 +48,10 @@ If all goes well, your credentials will be saved and you can execute CLI command
 
 * [setup](#setup)
 * [snippets:add](#snippetsadd)
+* run-server
+  - :start
+  - :config
+  - :log
 
 ### setup
 
@@ -105,6 +109,61 @@ EXAMPLES
 ```
 
 _See code: [lib/commands/snippets/add.ts](https://github.com/CacherApp/cacher-cli/blob/master/src/commands/snippets/add.ts)_
+
+### run-server:start
+Start the local run server to accept requests from a given origin.
+
+```
+USAGE
+  $ cacher run-server:start
+
+OPTIONS
+  -l, --logToFile      log output to server log file (~/.cacher/logs/run-server.log)
+  -o, --origin=origin  http(s) origin for CORS requests
+  -p, --port=port      port to run server on
+  -t, --token=token    server token to check against while making connections
+  -v, --verbose        show verbose logging
+
+EXAMPLE
+  $ cacher run-server:start -o https://myapp.dev -p 30012 -t my_server_token
+
+    Listening on: http://localhost:30012
+    Server token: my_server_token
+```
+
+### run-server:config
+
+Open the user configuration for the Run Server. Add rules here to handle additional file extensions.
+
+```
+USAGE
+  $ cacher run-server:config
+
+OPTIONS
+  -e, --editor=editor  open configuration file with editor (i.e. "atom")
+
+EXAMPLES
+  $ cacher run-server:config
+  $ cacher run-server:config -e atom
+```
+
+### run-server:log
+
+Show the server log file.
+
+```
+USAGE
+  $ cacher run-server:log
+
+OPTIONS
+  -n, --lines=lines  show the last n lines of the log
+  -t, --tail         follow the Run Server log
+
+EXAMPLE
+  $ cacher run-server:log
+  $ cacher run-server:log -t
+  $ cacher run-server:log -n 100
+```
 
 ## Command Help
 

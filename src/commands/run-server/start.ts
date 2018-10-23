@@ -19,7 +19,7 @@ export default class Start extends BaseCommand {
     port: flags.string({char: 'p', description: 'port to run server on'}),
     token: flags.string({char: 't', description: 'server token to check against while making connections'}),
     verbose: flags.boolean({char: 'v', description: 'show verbose logging'}),
-    logToFile: flags.boolean({char: 'l', description: 'log output to server log file'})
+    logToFile: flags.boolean({char: 'l', description: 'log output to server log file (~/.cacher/logs/run-server.log)'})
   }
 
   async run() {
