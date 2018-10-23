@@ -50,9 +50,9 @@ If all goes well, your credentials will be saved and you can execute CLI command
 * snippets:
   - [add](#snippetsadd)
 * run-server:
-  - [start](#runserverstart)
-  - [config](#runserverconfig)
-  - [log](#runserverlog)
+  - [start](#run-serverstart)
+  - [config](#run-serverconfig)
+  - [log](#run-serverlog)
 
 ### setup
 
