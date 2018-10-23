@@ -150,7 +150,7 @@ $ ngrok http 39135
 
 You can then connect to the server via Cacher's Standalone option:
 
-![Connect to Standalone Run Server](src/images/standalone-connect.png | width=400)
+![Connect to Standalone Run Server](src/images/standalone-connect.png)
 
 ### run-server:config
 
