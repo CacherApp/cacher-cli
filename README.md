@@ -134,6 +134,24 @@ EXAMPLE
     Server token: my_server_token
 ```
 
+#### Starting the server on a remote machine
+
+Running a remote server ensures all your developers are able to run snippet file commands against the same 
+environment.
+
+**Note:** Since the commands will be run using the shell account from which you launch the CLI, we recommend
+you use only machines which are for testing or are ephemeral (i.e. Docker instances).
+
+Example of launching with a secure tunnel ([ngrok](https://ngrok.com/)).
+```
+$ cacher run-server:start -p 39135 -t 4D5dzRGliafhGg~btNlR9 -o file:// -v
+$ ngrok http 39135
+```
+
+You can then connect to the server via Cacher's Standalone option:
+
+![Connect to Standalone Run Server](src/images/standalone-connect.png)
+
 ### run-server:config
 
 Open the user configuration for the Run Server. Add rules here to handle additional file extensions.
