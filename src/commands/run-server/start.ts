@@ -4,7 +4,8 @@ import {flags} from '@oclif/command'
 import {BaseCommand} from '../../base-command'
 
 export default class Start extends BaseCommand {
-  static description = 'Start the local run server to accept requests from a given origin.'
+  static description = 'Start a Run Server to accept requests from a given origin. The Run Server is used to run shell ' +
+    'commands using Cacher snippet file contents. Run this command in tandom with the Cacher\'s standalone Run Server option.'
 
   static examples = [
     `$ cacher run-server:start -o https://myapp.dev -p 30012 -t my_server_token

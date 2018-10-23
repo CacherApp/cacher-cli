@@ -47,11 +47,12 @@ If all goes well, your credentials will be saved and you can execute CLI command
 ## Commands
 
 * [setup](#setup)
-* [snippets:add](#snippetsadd)
-* run-server
-  - :start
-  - :config
-  - :log
+* snippets:
+  - [add](#snippetsadd)
+* run-server:
+  - [start](#runserverstart)
+  - [config](#runserverconfig)
+  - [log](#runserverlog)
 
 ### setup
 
@@ -111,7 +112,9 @@ EXAMPLES
 _See code: [lib/commands/snippets/add.ts](https://github.com/CacherApp/cacher-cli/blob/master/src/commands/snippets/add.ts)_
 
 ### run-server:start
-Start the local run server to accept requests from a given origin.
+Start a Run Server to accept requests from a given origin. The Run Server is used to run shell commands using Cacher snippet file contents. Run this command in tandom with the Cacher's standalone Run Server option.
+
+For more information about the Run Server and its configuration, check out [@cacherapp/cacher-run-server](https://github.com/cacherapp/cacher-run-server).
 
 ```
 USAGE
