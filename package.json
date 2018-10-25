@@ -8,7 +8,7 @@
   },
   "bugs": "https://github.com/cacherapp/cacher-cli/issues",
   "dependencies": {
-    "@cacherapp/run-server": "^1.0.0",
+    "@cacherapp/run-server": "^1.0.1",
     "@oclif/command": "^1.4.2",
     "@oclif/config": "^1.3.59",
     "@oclif/dev-cli": "^1.3.1",
