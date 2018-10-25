@@ -1,13 +1,14 @@
 {
   "name": "@cacherapp/cli",
   "description": "The command line interface to Cacher.",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "author": "Penguin Labs, LLC",
   "bin": {
     "cacher": "./bin/run"
   },
   "bugs": "https://github.com/cacherapp/cacher-cli/issues",
   "dependencies": {
+    "@cacherapp/run-server": "^1.0.0",
     "@oclif/command": "^1.4.2",
     "@oclif/config": "^1.3.59",
     "@oclif/dev-cli": "^1.3.1",
@@ -15,8 +16,10 @@
     "@oclif/plugin-help": "^1.1.6",
     "@oclif/tslint": "^1.0.2",
     "@types/node": "^9.4.6",
+    "atob": ">=2.1.0",
     "chalk": "^2.3.2",
     "copy-paste": "^1.3.0",
+    "cryptiles": ">=4.1.2",
     "dotenv": "^5.0.1",
     "eslint": "^4.19.1",
     "globby": "^8.0.1",

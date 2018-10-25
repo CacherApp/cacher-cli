@@ -1,22 +1,22 @@
-Cacher CLI (Beta)
+Cacher CLI
 ==========
 
 **Cacher CLI** - The command line interface to [Cacher](https://www.cacher.io), the code snippet organizer for pro 
 developers.
 
-![Cacher logo](src/images/cacher-logo.png)
+![Cacher logo](https://cdn.cacher.io/repos/cacher-logo.png)
 
 [![Version](https://img.shields.io/npm/v/@cacherapp/cli.svg)](https://npmjs.org/package/@cacherapp/cli)
 [![Downloads/week](https://img.shields.io/npm/dw/@cacherapp/cli.svg)](https://npmjs.org/package/@cacherapp/cli)
-[![License](https://img.shields.io/npm/l/@cacherapp/cli.svg)](https://github.com/jookyboi/cli/blob/master/package.json)
+[![License](https://img.shields.io/npm/l/@cacherapp/cli.svg)](https://github.com/cacherapp/cacher-cli/blob/master/package.json)
 
 The Cacher CLI allows power users to perform common actions on their Cacher libraries.
 
-The beta version is constantly evolving. Check back often for updates and new commands.
+The CLI is constantly evolving. Check back often for updates and new commands.
 
 **Demo**
 
-![CLI demo](src/images/demo.gif)
+![CLI demo](https://cdn.cacher.io/repos/demo.gif)
 
 ## Getting Started
 
@@ -31,7 +31,7 @@ To view your Cacher API credentials, visit:
 
 Note the API key and token in the Apps dialog footer:
 
-![Cacher logo](src/images/api-creds.png)
+![Cacher logo](https://cdn.cacher.io/repos/api-creds.png)
 
 From a terminal window, run:
 
@@ -47,7 +47,12 @@ If all goes well, your credentials will be saved and you can execute CLI command
 ## Commands
 
 * [setup](#setup)
-* [snippets:add](#snippetsadd)
+* snippets:
+  - [add](#snippetsadd)
+* run-server:
+  - [start](#run-serverstart)
+  - [config](#run-serverconfig)
+  - [log](#run-serverlog)
 
 ### setup
 
@@ -105,6 +110,84 @@ EXAMPLES
 ```
 
 _See code: [lib/commands/snippets/add.ts](https://github.com/CacherApp/cacher-cli/blob/master/src/commands/snippets/add.ts)_
+
+### run-server:start
+Start a Run Server to accept requests from a given origin. The Run Server is used to run shell commands using Cacher snippet file contents. Run this command in tandom with the Cacher's standalone Run Server option.
+
+For more information about the Run Server and its configuration, check out [@cacherapp/cacher-run-server](https://github.com/cacherapp/cacher-run-server).
+
+```
+USAGE
+  $ cacher run-server:start
+
+OPTIONS
+  -l, --logToFile      log output to server log file (~/.cacher/logs/run-server.log)
+  -o, --origin=origin  http(s) origin for CORS requests
+  -p, --port=port      port to run server on
+  -t, --token=token    server token to check against while making connections
+  -v, --verbose        show verbose logging
+
+EXAMPLE
+  $ cacher run-server:start -o https://myapp.dev -p 30012 -t my_server_token
+
+    Listening on: http://localhost:30012
+    Server token: my_server_token
+```
+
+#### Starting the server on a remote machine
+
+Running a remote server ensures all your developers are able to run snippet file commands against the same 
+environment.
+
+**Note:** Since the commands will be run using the shell account from which you launch the CLI, we recommend
+you use only machines which are for testing or are ephemeral (i.e. Docker instances).
+
+Example of launching with a secure tunnel ([ngrok](https://ngrok.com/)).
+```
+cacher run-server:start -p 39135 -t 4D5dzRGliafhGg~btNlR9 -o file:// -v
+ngrok http 39135
+```
+
+You can then connect to the server via Cacher's Standalone option:
+
+![Connect to Standalone Run Server](https://cdn.cacher.io/repos/standalone-connect.png)
+
+### run-server:config
+
+Open the user configuration for the Run Server. Add rules here to handle additional file extensions.
+
+```
+USAGE
+  $ cacher run-server:config
+
+OPTIONS
+  -e, --editor=editor  open configuration file with editor (i.e. "atom")
+
+EXAMPLES
+  $ cacher run-server:config
+  $ cacher run-server:config -e atom
+```
+
+[View documentation](https://github.com/cacherapp/cacher-run-server/README.md#editing-configuration) on the user
+configuration rule format.
+
+### run-server:log
+
+Show the server log file.
+
+```
+USAGE
+  $ cacher run-server:log
+
+OPTIONS
+  -n, --lines=lines  show the last n lines of the log
+  -t, --tail         follow the Run Server log
+
+EXAMPLE
+  $ cacher run-server:log
+  $ cacher run-server:log -t
+  $ cacher run-server:log -n 100
+```
 
 ## Command Help
 
