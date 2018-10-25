@@ -4,7 +4,7 @@ Cacher CLI
 **Cacher CLI** - The command line interface to [Cacher](https://www.cacher.io), the code snippet organizer for pro 
 developers.
 
-![Cacher logo](src/images/cacher-logo.png)
+![Cacher logo](https://cdn.cacher.io/repos/cacher-logo.png)
 
 [![Version](https://img.shields.io/npm/v/@cacherapp/cli.svg)](https://npmjs.org/package/@cacherapp/cli)
 [![Downloads/week](https://img.shields.io/npm/dw/@cacherapp/cli.svg)](https://npmjs.org/package/@cacherapp/cli)
@@ -16,7 +16,7 @@ The CLI is constantly evolving. Check back often for updates and new commands.
 
 **Demo**
 
-![CLI demo](src/images/demo.gif)
+![CLI demo](https://cdn.cacher.io/repos/demo.gif)
 
 ## Getting Started
 
@@ -31,7 +31,7 @@ To view your Cacher API credentials, visit:
 
 Note the API key and token in the Apps dialog footer:
 
-![Cacher logo](src/images/api-creds.png)
+![Cacher logo](https://cdn.cacher.io/repos/api-creds.png)
 
 From a terminal window, run:
 
@@ -144,13 +144,13 @@ you use only machines which are for testing or are ephemeral (i.e. Docker instan
 
 Example of launching with a secure tunnel ([ngrok](https://ngrok.com/)).
 ```
-$ cacher run-server:start -p 39135 -t 4D5dzRGliafhGg~btNlR9 -o file:// -v
-$ ngrok http 39135
+cacher run-server:start -p 39135 -t 4D5dzRGliafhGg~btNlR9 -o file:// -v
+ngrok http 39135
 ```
 
 You can then connect to the server via Cacher's Standalone option:
 
-![Connect to Standalone Run Server](src/images/standalone-connect.png)
+![Connect to Standalone Run Server](https://cdn.cacher.io/repos/standalone-connect.png)
 
 ### run-server:config
 
