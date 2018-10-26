@@ -18,7 +18,7 @@ export default class Start extends BaseCommand {
   static flags = {
     origin: flags.string({
       char: 'o',
-      description: 'http(s) origin for CORS requests (use "file://" with Cacher Desktop, "https://app.cacher.io" with Web App'
+      description: 'http(s) origin for CORS requests (use "file://" with Cacher Desktop, "https://app.cacher.io" with Web App)'
     }),
     port: flags.string({char: 'p', description: 'port to run server on'}),
     token: flags.string({char: 't', description: 'server token to check against while making connections'}),

@@ -122,7 +122,7 @@ USAGE
 
 OPTIONS
   -l, --logToFile      log output to server log file (~/.cacher/logs/run-server.log)
-  -o, --origin=origin  http(s) origin for CORS requests (use "file://" with Cacher Desktop, "https://app.cacher.io" with Web App
+  -o, --origin=origin  http(s) origin for CORS requests (use "file://" with Cacher Desktop, "https://app.cacher.io" with Web App)
   -p, --port=port      port to run server on
   -t, --token=token    server token to check against while making connections
   -v, --verbose        show verbose logging
