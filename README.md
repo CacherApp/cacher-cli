@@ -122,7 +122,7 @@ USAGE
 
 OPTIONS
   -l, --logToFile      log output to server log file (~/.cacher/logs/run-server.log)
-  -o, --origin=origin  http(s) origin for CORS requests
+  -o, --origin=origin  http(s) origin for CORS requests (use "file://" with Cacher Desktop, "https://app.cacher.io" with Web App
   -p, --port=port      port to run server on
   -t, --token=token    server token to check against while making connections
   -v, --verbose        show verbose logging
@@ -132,6 +132,18 @@ EXAMPLE
 
     Listening on: http://localhost:30012
     Server token: my_server_token
+```
+
+**Examples:**
+```shell
+# With origin "https://app.cacher.io", generate port and token
+cacher run-server:start
+
+# With origin "file://" for Cacher Desktop Client, specify port and token
+cacher run-server:start -o file:// -p 12345 -t secret
+
+# Verbose output, logged to "~/.cacher/logs/run-server.log"
+cacher run-server:start -v -l
 ```
 
 #### Starting the server on a remote machine
