@@ -27,6 +27,8 @@ export default class Start extends BaseCommand {
   }
 
   async run() {
+    this.checkForUpdate()
+
     const {flags} = this.parse(Start)
 
     // By default, origin points to production Cacher instance

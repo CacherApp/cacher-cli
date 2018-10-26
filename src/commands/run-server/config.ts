@@ -17,6 +17,8 @@ $ cacher run-server:config -e atom
   }
 
   async run() {
+    this.checkForUpdate()
+
     const {flags} = this.parse(Config)
     RunServer.openConfig(flags.editor)
   }

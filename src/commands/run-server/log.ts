@@ -19,6 +19,8 @@ $ cacher run-server:log -n 100
   }
 
   async run() {
+    this.checkForUpdate()
+
     const {flags} = this.parse(Log)
     const lines = flags.lines ? parseInt(flags.lines, 10) : undefined
     RunServer.openLog(flags.tail, lines)
