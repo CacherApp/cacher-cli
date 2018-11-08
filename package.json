@@ -1,7 +1,7 @@
 {
   "name": "@cacherapp/cli",
   "description": "The command line interface to Cacher.",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "author": "Penguin Labs, LLC",
   "bin": {
     "cacher": "./bin/run"
