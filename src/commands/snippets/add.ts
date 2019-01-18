@@ -4,7 +4,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 const inquirer = require('inquirer')
-const ncp = require('copy-paste')
+const clipboardy = require('clipboardy')
 const notifier = require('node-notifier')
 const request = require('request')
 const opn = require('opn')
@@ -81,7 +81,7 @@ export default class Add extends BaseCommand {
       this.log(chalk.gray(`Snippet file content read from "${args.filename}":\n`))
     } else {
       // Read from clipboard
-      this.content = ncp.paste()
+      this.content = clipboardy.readSync()
       this.log(chalk.gray('Snippet file content read from clipboard:\n'))
     }
 
@@ -162,8 +162,7 @@ export default class Add extends BaseCommand {
 
     const credentials = this.getCredentials()
 
-    const body = {
-      teamScreenname: this.teamScreenname,
+    const body: any = {
       snippet: {
         title: this.title,
         description: this.snippetDescription,
@@ -176,6 +175,10 @@ export default class Add extends BaseCommand {
           }
         ]
       }
+    }
+
+    if (this.teamScreenname && this.teamScreenname.trim() !== '') {
+      body.teamScreenname = this.teamScreenname
     }
 
     request({
