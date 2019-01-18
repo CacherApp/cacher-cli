@@ -27,12 +27,12 @@
     "node-notifier": "^5.2.1",
     "opn": "^5.3.0",
     "ora": "^2.0.0",
-    "request": "^2.85.0",
+    "request": "^2.88.0",
     "semver": "^5.5.0",
     "ts-node": "^5.0.0",
     "tslib": "^1.9.0",
     "tslint": "^5.9.1",
-    "typescript": "^2.7.2"
+    "typescript": "^3.2.4"
   },
   "devDependencies": {},
   "engines": {
