@@ -162,8 +162,7 @@ export default class Add extends BaseCommand {
 
     const credentials = this.getCredentials()
 
-    const body = {
-      teamScreenname: this.teamScreenname,
+    const body: any = {
       snippet: {
         title: this.title,
         description: this.snippetDescription,
@@ -176,6 +175,10 @@ export default class Add extends BaseCommand {
           }
         ]
       }
+    }
+
+    if (this.teamScreenname && this.teamScreenname.trim() !== '') {
+      body.teamScreenname = this.teamScreenname
     }
 
     request({
