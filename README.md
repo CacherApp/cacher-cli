@@ -16,7 +16,7 @@ The CLI is constantly evolving. Check back often for updates and new commands.
 
 **Demo**
 
-![CLI demo](https://cdn.cacher.io/repos/demo.gif)
+![CLI demo](https://cdn.cacher.io/repos/cli-demo-add.gif)
 
 ## Getting Started
 
