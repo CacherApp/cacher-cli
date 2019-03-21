@@ -180,7 +180,7 @@ EXAMPLES
   $ cacher run-server:config -e atom
 ```
 
-[View documentation](https://github.com/cacherapp/cacher-run-server/README.md#editing-configuration) on the user
+[View documentation](https://github.com/CacherApp/cacher-run-server#editing-the-configuration) on the user
 configuration rule format.
 
 ### run-server:log
