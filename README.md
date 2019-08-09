@@ -31,7 +31,7 @@ To view your Cacher API credentials, visit:
 
 Note the API key and token in the dialog:
 
-![Cacher logo](https://cdn.cacher.io/repos/api-creds.png | width=600)
+<img src="https://cdn.cacher.io/repos/api-creds.png" width="600" />
 
 From a terminal window, run:
 
