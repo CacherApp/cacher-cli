@@ -29,9 +29,9 @@ The CLI is constantly evolving. Check back often for updates and new commands.
 To view your Cacher API credentials, visit:
 [https://app.cacher.io/enter?action=view_api_creds](https://app.cacher.io/enter?action=view_api_creds)
 
-Note the API key and token in the Apps dialog footer:
+Note the API key and token in the dialog:
 
-![Cacher logo](https://cdn.cacher.io/repos/api-creds.png)
+<img src="https://cdn.cacher.io/repos/api-creds.png" width="600" />
 
 From a terminal window, run:
 
