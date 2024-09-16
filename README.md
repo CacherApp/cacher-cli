@@ -51,7 +51,7 @@ If all goes well, your credentials will be saved and you can execute CLI command
   - [add](#snippetsadd)
 * run-server:
   - [start](#run-serverstart)
-  - [config](#run-serverconfig)
+  - [configure](#run-serverconfig)
   - [log](#run-serverlog)
 
 ### setup
@@ -164,20 +164,20 @@ You can then connect to the server via Cacher's Standalone option:
 
 ![Connect to Standalone Run Server](https://cdn.cacher.io/repos/standalone-connect.png)
 
-### run-server:config
+### run-server:configure
 
 Open the user configuration for the Run Server. Add rules here to handle additional file extensions.
 
 ```
 USAGE
-  $ cacher run-server:config
+  $ cacher run-server:configure
 
 OPTIONS
-  -e, --editor=editor  open configuration file with editor (i.e. "atom")
+  -e, --editor=editor  open configuration file with editor (i.e. "code" for Visual Studio Code)
 
 EXAMPLES
-  $ cacher run-server:config
-  $ cacher run-server:config -e atom
+  $ cacher run-server:configure
+  $ cacher run-server:configure -e code
 ```
 
 [View documentation](https://github.com/CacherApp/cacher-run-server#editing-the-configuration) on the user

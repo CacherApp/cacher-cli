@@ -1,9 +1,9 @@
 import {RunServer} from '@cacherapp/run-server'
-import {flags} from '@oclif/command'
+import {Flags} from '@oclif/core'
 
-import {BaseCommand} from '../../base-command'
+import { BaseCommand } from '../../base-command.js'
 
-export default class Log extends BaseCommand {
+export default class RunServerLog extends BaseCommand {
   static description = 'Show the server log file.'
 
   static examples = [
@@ -14,15 +14,15 @@ $ cacher run-server:log -n 100
   ]
 
   static flags = {
-    tail: flags.boolean({char: 't', description: 'follow the Run Server log'}),
-    lines: flags.string({char: 'n', description: 'show the last n lines of the log'})
+    lines: Flags.string({char: 'n', description: 'show the last n lines of the log'}),
+    tail: Flags.boolean({char: 't', description: 'follow the Run Server log'})
   }
 
-  async run() {
+  public async run(): Promise<void> {
     this.checkForUpdate()
 
-    const {flags} = this.parse(Log)
-    const lines = flags.lines ? parseInt(flags.lines, 10) : undefined
+    const {flags} = await this.parse(RunServerLog)
+    const lines = flags.lines ? Number.parseInt(flags.lines, 10) : undefined
     RunServer.openLog(flags.tail, lines)
   }
 }
