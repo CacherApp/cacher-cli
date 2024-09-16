@@ -213,8 +213,8 @@ cacher help snippets:add    # Help and usage for the snippets:add command
 
 - [oclif](https://oclif.io/) - Heroku's open CLI framework.
 - [chalk](https://github.com/chalk/chalk) - Terminal styling for Node.
-- [node-copy-paste](https://github.com/xavi-/node-copy-paste) - Cross-platform clipboard support.
+- [clipboardy](https://www.npmjs.com/package/clipboardy) - Cross-platform clipboard support.
 
 ## Author / License
 
-Released under the [MIT License](/LICENSE) by [Rui Jiang](https://github.com/jookyboi) of [Cacher](https://www.cacher.io).
+Released under the [MIT License](/LICENSE) by [Cacher](https://www.cacher.io).
