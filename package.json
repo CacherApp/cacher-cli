@@ -1,63 +1,66 @@
 {
   "name": "@cacherapp/cli",
   "description": "The command line interface to Cacher.",
-  "version": "1.0.10",
+  "version": "1.1.0",
   "author": "Penguin Labs, LLC",
   "bin": {
-    "cacher": "./bin/run"
+    "cacher": "./bin/run.js"
   },
-  "bugs": "https://github.com/cacherapp/cacher-cli/issues",
+  "bugs": "https://github.com/CacherApp/cacher-cli/issues",
   "dependencies": {
     "@cacherapp/run-server": "^1.0.5",
-    "@oclif/command": "^1.5.8",
-    "@oclif/config": "^1.12.0",
-    "@oclif/errors": "^1.2.2",
-    "@oclif/plugin-help": "^2.1.4",
-    "atob": ">=2.1.0",
-    "chalk": "^2.3.2",
-    "clipboardy": "^1.2.3",
-    "cryptiles": ">=4.1.2",
-    "diff": ">=3.5.0",
-    "dotenv": "^5.0.1",
-    "eslint": "^4.19.1",
-    "globby": "^8.0.1",
-    "inquirer": "^5.1.0",
-    "lodash.template": ">=4.5.0",
-    "node-notifier": "^5.2.1",
-    "opn": "^5.3.0",
-    "ora": "^2.0.0",
-    "request": "^2.88.0",
-    "semver": "^5.5.0"
+    "@oclif/core": "^4",
+    "@oclif/plugin-help": "^6",
+    "@oclif/plugin-plugins": "^5",
+    "chalk": "^5.3.0",
+    "clipboardy": "^4.0.0",
+    "dotenv": "^16.4.5",
+    "inquirer": "^10.2.2",
+    "node-notifier": "^10.0.1",
+    "open": "^10.1.0",
+    "ora": "^8.1.0",
+    "semver": "^7.6.3"
   },
   "devDependencies": {
-    "@oclif/dev-cli": "^1.21.0",
-    "@oclif/tslint": "^3.1.1",
-    "@types/node": "^10.12.18",
-    "ts-node": "^7.0.1",
-    "tslint": "^5.12.1",
-    "typescript": "^3.2.4"
+    "@oclif/prettier-config": "^0.2.1",
+    "@types/chai": "^4",
+    "@types/node": "^18.19.50",
+    "@types/node-notifier": "^8.0.5",
+    "@types/open": "^6.2.1",
+    "chai": "^4",
+    "eslint": "^8",
+    "eslint-config-oclif": "^5",
+    "eslint-config-oclif-typescript": "^3",
+    "eslint-config-prettier": "^9",
+    "oclif": "^4",
+    "shx": "^0.3.3",
+    "ts-node": "^10",
+    "typescript": "^5"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=18.0.0"
   },
   "files": [
-    ".oclif.manifest.json",
     "/bin",
-    "/lib"
+    "/dist",
+    "/oclif.manifest.json"
   ],
-  "homepage": "https://github.com/cacherapp/cacher-cli",
+  "homepage": "https://github.com/CacherApp/cacher-cli",
   "keywords": [
-    "cacher",
     "oclif"
   ],
   "license": "MIT",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
+  "type": "module",
   "oclif": {
-    "commands": "./lib/commands",
     "bin": "cacher",
+    "dirname": "cacher",
+    "commands": "./dist/commands",
     "plugins": [
-      "@oclif/plugin-help"
+      "@oclif/plugin-help",
+      "@oclif/plugin-plugins"
     ],
+    "topicSeparator": " ",
     "topics": {
       "run-server": {
         "description": "use to run snippets locally"
@@ -70,14 +73,13 @@
       }
     }
   },
-  "repository": "cacherapp/cacher-cli",
+  "repository": "CacherApp/cacher-cli",
   "scripts": {
-    "build": "rm -rf lib && tsc",
-    "clean": "rm -f .oclif.manifest.json",
-    "postpublish": "npm run clean",
-    "prepublishOnly": "npm run build && oclif-dev manifest",
-    "preversion": "npm run clean",
-    "version": "oclif-dev readme && git add README.md"
+    "build": "shx rm -rf dist && tsc -b",
+    "lint": "eslint . --ext .ts",
+    "postpack": "shx rm -f oclif.manifest.json",
+    "prepack": "oclif manifest && oclif readme",
+    "version": "oclif readme && git add README.md"
   },
-  "types": "lib/index.d.ts"
+  "types": "dist/index.d.ts"
 }

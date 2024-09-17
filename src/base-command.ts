@@ -1,26 +1,31 @@
-import {Command} from '@oclif/command'
+import {Command} from '@oclif/core'
 import chalk from 'chalk'
-import {execSync} from 'child_process'
-import * as fs from 'fs'
-import * as os from 'os'
-
-const semver = require('semver')
-require('dotenv').config()
+import 'dotenv/config'
+import {execSync} from 'node:child_process'
+import * as fs from 'node:fs'
+import * as os from 'node:os'
+import { type Ora } from 'ora'
+import * as semver from 'semver'
 
 export abstract class BaseCommand extends Command {
   cacherDir = `${os.homedir()}/.cacher`
   storageFile = `${this.cacherDir}/storage.json`
 
-  makeCacherDir() {
-    if (!fs.existsSync(this.cacherDir)) {
-      fs.mkdirSync(this.cacherDir)
+  checkCredentials() {
+    const credentialsFile = `${os.homedir()}/.cacher/credentials.json`
+    const envVarsPresent = process.env.CACHER_API_KEY && process.env.CACHER_API_TOKEN
+
+    if (!fs.existsSync(credentialsFile) && !envVarsPresent) {
+      this.warnAndQuit(
+        'No Cacher credentials found. Please run `cacher setup` or set environment variables `CACHER_API_KEY` and `CACHER_API_TOKEN`.',
+      )
     }
   }
 
   checkForUpdate() {
     this.makeCacherDir()
 
-    let storage: any = {}
+    let storage: { checkedForUpdate?: number } = {}
 
     if (fs.existsSync(this.storageFile)) {
       storage = JSON.parse(fs.readFileSync(this.storageFile).toString())
@@ -32,27 +37,11 @@ export abstract class BaseCommand extends Command {
       const lastChecked = storage.checkedForUpdate
       const dayInMillis = 60 * 60 * 1000 * 24
 
-      if ((new Date()).getTime() - dayInMillis > lastChecked) {
+      if (Date.now() - dayInMillis > lastChecked) {
         this.notifyUserForUpdate()
       }
     } else {
       this.notifyUserForUpdate()
-    }
-  }
-
-  warnAndQuit(message: string) {
-    this.log(chalk.red(message))
-    this.exit(0)
-  }
-
-  checkCredentials() {
-    const credentialsFile = `${os.homedir()}/.cacher/credentials.json`
-    const envVarsPresent = process.env.CACHER_API_KEY && process.env.CACHER_API_TOKEN
-
-    if (!fs.existsSync(credentialsFile) && !envVarsPresent) {
-      this.warnAndQuit(
-        'No Cacher credentials found. Please run `cacher setup` or set environment variables `CACHER_API_KEY` and `CACHER_API_TOKEN`.',
-      )
     }
   }
 
@@ -75,12 +64,23 @@ export abstract class BaseCommand extends Command {
     return {apiKey, apiToken}
   }
 
-  handleApiResponse(response: any, spinner: any) {
-    if (response.statusCode === 403) {
+  handleApiResponse(response: Response, spinner: Ora) {
+    if (response.status === 403) {
       spinner.fail(chalk.red(' Cacher API key/token combination invalid.'))
-    } else if (response.statusCode >= 400) {
+    } else if (response.status >= 400) {
       spinner.fail(chalk.red(' Server-side error.'))
     }
+  }
+
+  makeCacherDir() {
+    if (!fs.existsSync(this.cacherDir)) {
+      fs.mkdirSync(this.cacherDir)
+    }
+  }
+
+  warnAndQuit(message: string) {
+    this.log(chalk.red(message))
+    this.exit(0)
   }
 
   private notifyUserForUpdate() {
@@ -93,8 +93,8 @@ export abstract class BaseCommand extends Command {
     }
 
     // Update last checked time
-    let storage = JSON.parse(fs.readFileSync(this.storageFile).toString())
-    storage.checkedForUpdate = (new Date()).getTime()
+    const storage = JSON.parse(fs.readFileSync(this.storageFile).toString())
+    storage.checkedForUpdate = Date.now()
     fs.writeFileSync(this.storageFile, JSON.stringify(storage))
   }
 }

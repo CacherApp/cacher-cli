@@ -1,22 +1,30 @@
-import {flags} from '@oclif/command'
+import {Args, Flags} from '@oclif/core'
 import chalk from 'chalk'
-import * as fs from 'fs'
-import * as path from 'path'
+import clipboardy from 'clipboardy'
+import inquirer from 'inquirer'
+import * as fs from 'node:fs'
+import path, {dirname} from 'node:path'
+import {fileURLToPath} from 'node:url'
+import notifier from 'node-notifier'
+import open from 'open'
+import ora from 'ora'
 
-const inquirer = require('inquirer')
-const clipboardy = require('clipboardy')
-const notifier = require('node-notifier')
-const request = require('request')
-const opn = require('opn')
-const ora = require('ora')
+import {BaseCommand} from '../../base-command.js'
+import {appConfig} from '../../config.js'
+import {errorCodes} from '../../error-codes.js'
+import {getModeForPath} from '../../filetypes.js'
+import {Snippet} from '../../types/snippet.js'
 
-import {BaseCommand} from '../../base-command'
-import config from '../../config'
-import ErrorCodes from '../../errors-codes'
-import {getModeForPath} from '../../filetypes'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
-export default class Add extends BaseCommand {
-  static description = 'Add a new snippet to your Cacher personal/team library. By default, creates snippet using clipboard contents. Append filename argument to use file contents instead.'
+export default class SnippetsAdd extends BaseCommand {
+  static override args = {
+    filename: Args.string({description: 'filename to read', required: false}),
+  }
+
+  static description =
+    'Add a new snippet to your Cacher personal/team library. By default, creates snippet using clipboard contents. Append filename argument to use file contents instead.'
 
   static examples = [
     `$ cacher snippets:add
@@ -36,33 +44,117 @@ export default class Add extends BaseCommand {
   ]
 
   static flags = {
-    filename: flags.string({char: 'f', description: 'filename for content (will override name of file passed in)'}),
-    title: flags.string({char: 't', description: 'snippet title'}),
-    description: flags.string({char: 'd', description: 'snippet description', default: ''}),
-    team: flags.string({char: 'm', description: 'screenname of team library that snippet will be created in', default: ''}),
-    public: flags.boolean({char: 'u', description: 'save as public snippet'}),
-    quiet: flags.boolean({char: 'q', description: 'minimal feedback'})
+    description: Flags.string({char: 'd', default: '', description: 'snippet description'}),
+    filename: Flags.string({char: 'f', description: 'filename for content (will override name of file passed in)'}),
+    public: Flags.boolean({char: 'u', description: 'save as public snippet'}),
+    quiet: Flags.boolean({char: 'q', description: 'minimal feedback'}),
+    team: Flags.string({
+      char: 'm',
+      default: '',
+      description: 'screenname of team library that snippet will be created in',
+    }),
+    title: Flags.string({char: 't', description: 'snippet title'}),
   }
 
-  static args = [
-    {name: 'filename', required: false}
-  ]
+  notifyCreated = (snippet: Snippet) => {
+    notifier.notify(
+      {
+        actions: 'Open',
+        closeLabel: 'Close',
+        icon: path.join(__dirname, '..', '..', 'images', 'cacher-icon.png'),
+        message: this.title,
+        timeout: 3,
+        title: 'Snippet created',
+      },
+      (err: unknown, action: string) => {
+        if (action === 'activate') {
+          open(`${appConfig.appHost}/enter?action=goto_snippet&s=${snippet.guid}`, {wait: false})
+        }
+      },
+    )
+  }
 
-  private filename = ''
-  private title = ''
-  private snippetDescription = ''
+  saveSnippet = async () => {
+    const spinner = ora('Saving snippet').start()
+    spinner.color = 'green'
+
+    const credentials = this.getCredentials()
+
+    const body: {snippet: Snippet; teamScreenname?: string} = {
+      snippet: {
+        description: this.snippetDescription,
+        files: [
+          {
+            content: this.content,
+            filename: this.filename,
+            filetype: this.filetype,
+          },
+        ],
+        isPrivate: !this.isPublic,
+        title: this.title,
+      },
+    }
+
+    if (this.teamScreenname && this.teamScreenname.trim() !== '') {
+      body.teamScreenname = this.teamScreenname
+    }
+
+    const response = await fetch(`${appConfig.apiHost}/public/snippets`, {
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Api-Key': credentials.apiKey,
+        'X-Api-Token': credentials.apiToken,
+      },
+      method: 'POST',
+    })
+
+    const data: {error_code?: string; snippet: Snippet} = await response.json()
+
+    if (response.status === 200) {
+      spinner.succeed(chalk.green(` Snippet successfully created: ${this.title}`))
+
+      if (!this.quiet) {
+        this.log(
+          `\n${chalk.white('View your snippet in Cacher:')}
+${chalk.yellow.underline(`${appConfig.appHost}/enter?action=goto_snippet&s=${data.snippet.guid}`)}`,
+        )
+
+        this.log(
+          `\n${chalk.white("View your snippet's page:")}
+${chalk.yellow.underline(`${appConfig.snippetsHost}/snippet/${data.snippet.guid}`)}\n`,
+        )
+
+        this.notifyCreated(data.snippet)
+      }
+    } else if (response.status === 403 && data.error_code === errorCodes.planLimitSnippets) {
+      spinner.fail(chalk.red(' You have hit your account plan limit for private snippets.'))
+      this.log(
+        chalk.red('Upgrade your plan at: ') + chalk.red.underline(`${appConfig.appHost}/enter?action=view_plans`),
+      )
+    } else if (response.status === 404 && data.error_code === errorCodes.resourceNotFoundTeam) {
+      spinner.fail(chalk.red(` Team with screenname "${this.teamScreenname}" not found.`))
+    } else {
+      this.handleApiResponse(response, spinner)
+    }
+  }
+
   private content = ''
+  private filename = ''
   private filetype = ''
-  private teamScreenname: any
   private isPublic = false
   private quiet = false
 
-  private snippet: any
+  private snippetDescription = ''
 
-  async run() {
+  private teamScreenname = ''
+
+  private title = ''
+
+  public async run(): Promise<void> {
     this.checkForUpdate()
 
-    const {args, flags} = this.parse(Add)
+    const {args, flags} = await this.parse(SnippetsAdd)
     this.checkCredentials()
 
     if (args.filename) {
@@ -87,7 +179,7 @@ export default class Add extends BaseCommand {
 
     this.log(chalk.yellow(`${this.content}\n`))
 
-    this.filename = this.filename || ''
+    this.filename = flags.filename || ''
     this.title = flags.title || ''
     this.snippetDescription = flags.description || ''
     this.teamScreenname = flags.team
@@ -98,47 +190,49 @@ export default class Add extends BaseCommand {
 
     if (!this.title) {
       inquiries.push({
-        type: 'input',
-        name: 'title',
         message: 'Snippet title',
+        name: 'title',
         suffix: ':',
-        validate: (input: string) => {
+        type: 'input',
+        validate(input: string) {
           if (input.trim() === '') {
             return 'Snippet title required'
-          } else {
-            return true
           }
-        }
+
+          return true
+        },
       })
     }
 
     if (!this.snippetDescription) {
       inquiries.push({
-        type: 'input',
-        name: 'description',
+        default: '',
         message: 'Description',
+        name: 'description',
         suffix: ':',
-        default: ''
+        type: 'input',
       })
     }
 
     if (!this.filename) {
       inquiries.push({
-        type: 'input',
-        name: 'filename',
         message: 'Filename',
+        name: 'filename',
         suffix: ':',
-        validate: (input: string) => {
+        type: 'input',
+        validate(input: string) {
           if (input.trim() === '') {
             return 'Filename required'
-          } else {
-            return true
           }
-        }
+
+          return true
+        },
       })
     }
 
-    inquirer.prompt(inquiries).then((answers: any) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    inquirer.prompt(inquiries).then(async (answers: Answer) => {
       if (answers.title) {
         this.title = answers.title
       }
@@ -152,94 +246,7 @@ export default class Add extends BaseCommand {
       }
 
       this.filetype = getModeForPath(this.filename).mode.split('/')[2]
-      this.saveSnippet()
+      await this.saveSnippet()
     })
-  }
-
-  saveSnippet = () => {
-    const spinner = ora('Saving snippet').start()
-    spinner.color = 'green'
-
-    const credentials = this.getCredentials()
-
-    const body: any = {
-      snippet: {
-        title: this.title,
-        description: this.snippetDescription,
-        isPrivate: !this.isPublic,
-        files: [
-          {
-            filename: this.filename,
-            content: this.content,
-            filetype: this.filetype
-          }
-        ]
-      }
-    }
-
-    if (this.teamScreenname && this.teamScreenname.trim() !== '') {
-      body.teamScreenname = this.teamScreenname
-    }
-
-    request({
-      method: 'POST',
-      url: `${config.apiHost}/public/snippets`,
-      headers: {
-        'X-Api-Key': credentials.apiKey,
-        'X-Api-Token': credentials.apiToken
-      },
-      strictSSL: config.env === 'production',
-      json: true,
-      body
-    }, (error: any, response: any, body: any) => {
-      if (response.statusCode === 200) {
-        spinner.succeed(chalk.green(` Snippet successfully created: ${this.title}`))
-
-        if (!this.quiet) {
-          this.log(
-            `\n${chalk.white('View your snippet in Cacher:')}
-${chalk.yellow.underline(`${config.appHost}/enter?action=goto_snippet&s=${body.snippet.guid}`)}`
-          )
-
-          this.log(
-            `\n${chalk.white('View your snippet\'s page:')}
-${chalk.yellow.underline(`${config.snippetsHost}/snippet/${body.snippet.guid}`)}\n`
-          )
-
-          this.snippet = body.snippet
-          this.notifyCreated()
-        }
-      } else if (response.statusCode === 403
-        && body.error_code === ErrorCodes.planLimitSnippets) {
-        spinner.fail(chalk.red(' You have hit your account plan limit for private snippets.'))
-        this.log(chalk.red('Upgrade your plan at: ') + chalk.red.underline(`${config.appHost}/enter?action=view_plans`))
-      } else if (response.statusCode === 404
-        && body.error_code === ErrorCodes.resourceNotFoundTeam) {
-        spinner.fail(chalk.red(` Team with screenname "${this.teamScreenname}" not found.`))
-      } else {
-        this.handleApiResponse(response, spinner)
-      }
-    })
-  }
-
-  notifyCreated = () => {
-    notifier.notify(
-      {
-        title: 'Snippet created',
-        message: this.title,
-        icon: path.join(__dirname, '..', '..', 'images', 'cacher-icon.png'),
-        timeout: 3,
-        actions: 'Open',
-        closeLabel: 'Close'
-      },
-      (err: any, action: any) => {
-        if (action === 'activate') {
-          opn(
-            `${config.appHost}/enter?action=goto_snippet&s=${this.snippet.guid}`,
-            {wait: false}
-          )
-        }
-      }
-    )
   }
 }
