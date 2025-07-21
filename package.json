@@ -2,7 +2,7 @@
   "name": "@cacherapp/cli",
   "description": "The command line interface to Cacher.",
   "version": "1.1.1",
-  "author": "Penguin Labs, LLC",
+  "author": "Cacher Online Services LLC",
   "bin": {
     "cacher": "./bin/run.js"
   },
